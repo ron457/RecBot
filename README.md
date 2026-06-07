@@ -2,9 +2,11 @@
 
 <div align="center">
 
-AI-Powered Multi-Agent Product Recommendation System
+### AI-Powered Multi-Agent Product Recommendation Assistant
 
 Built with LangChain • FastAPI • React • Ollama • Mistral 7B
+
+Live Amazon Product Search • Reddit & YouTube Validation • Conversational Memory • Streaming Responses
 
 </div>
 
@@ -12,51 +14,53 @@ Built with LangChain • FastAPI • React • Ollama • Mistral 7B
 
 ## Overview
 
-RecBot is a production-style AI recommendation assistant that helps users discover products using conversational natural language.
+RecBot is an AI-powered product recommendation assistant that helps users discover products through natural language conversations.
 
-Unlike traditional recommendation engines that rely only on marketplace ratings, RecBot combines:
+Unlike traditional recommendation engines that rely solely on marketplace ratings, RecBot combines:
 
-- Live Amazon product data
-- Reddit discussions
-- YouTube review signals
-- Multi-agent reasoning
+- Live Amazon product retrieval
+- Reddit community discussions
+- YouTube review insights
 - Conversational memory
+- Multi-agent reasoning
 
 to generate trustworthy and explainable recommendations.
+
+The system is built using a supervisor-driven multi-agent architecture where specialized agents collaborate sequentially to understand user intent, retrieve products, validate recommendations using external review signals, and generate grounded responses.
 
 ---
 
 ## Key Features
 
-### Multi-Agent Architecture
+### Multi-Agent Recommendation Pipeline
 
 RecBot uses specialized agents that collaborate to generate recommendations.
 
-| Agent | Responsibility |
-|---------|---------------|
-| Query Type Classifier | Detects new search vs follow-up |
-| Intent Classifier | Extracts budget, category, preferences |
-| Product Search Agent | Retrieves live Amazon products |
-| Web Review Agent | Collects Reddit + YouTube review signals |
-| Recommendation Writer | Generates recommendation response |
-| Follow-up Agent | Handles comparisons and follow-up questions |
+| Component | Type |
+|------------|------------|
+| Query Type Classifier | Agent / Chain |
+| Intent Classifier | Agent / Chain |
+| Product Search | Tool / Service |
+| Web Review Retrieval | Tool / Service |
+| Recommendation Writer | Agent / Chain |
+| Followup Agent | Agent / Chain |
 
 ---
 
-### Real-Time Product Search
+### Live Amazon Product Search
 
-RecBot retrieves products directly from Amazon India using RapidAPI.
+RecBot retrieves real-time product data from Amazon India through RapidAPI.
 
-Quality filters:
+Filtering Rules:
 
-- Rating >= 3.5
-- Reviews >= 10
+- Rating ≥ 3.5
+- Reviews ≥ 10
 
-This removes low-quality products and improves recommendation reliability.
+This removes low-quality products and improves recommendation quality.
 
 ---
 
-### Cross-Platform Validation
+### Cross-Platform Review Validation
 
 Recommendations are verified using:
 
@@ -64,17 +68,17 @@ Recommendations are verified using:
 - Reddit Discussions
 - YouTube Review Signals
 
-This reduces marketplace bias and improves trustworthiness.
+This reduces marketplace bias and improves recommendation trustworthiness.
 
 ---
 
 ### Conversational Memory
 
-RecBot remembers:
+The system maintains session context including:
 
-- Category
-- Budget
-- User requirements
+- Product category
+- Budget constraints
+- User preferences
 - Previously shown products
 
 Example:
@@ -85,21 +89,58 @@ User:
 
 Follow-up:
 
-> Compare the first and third options
+> Compare the first and third option
 
-RecBot answers without performing another product search.
+RecBot answers using previously retrieved products without re-running product search.
 
 ---
 
 ### Streaming Responses
 
-Responses stream token-by-token similar to ChatGPT.
+Responses are streamed token-by-token using:
 
-Benefits:
+- FastAPI StreamingResponse
+- Python generators
+- React ReadableStream
 
-- Faster perceived response time
-- Improved user experience
-- Live recommendation generation
+This provides a ChatGPT-style user experience.
+
+---
+
+## System Architecture
+
+```text
+User Query
+     │
+     ▼
+FastAPI Orchestrator
+     │
+     ▼
+Query Type Classifier
+     │
+     ├──────────────► Followup Agent
+     │                       │
+     │                       ▼
+     │                 Stream Response
+     │
+     ▼
+Intent Classifier
+     │
+     ▼
+Product Search Service
+     │
+     ▼
+Web Review Retrieval Service
+     │
+     ▼
+Recommendation Writer
+     │
+     ▼
+Streaming Response
+     │
+     ▼
+Frontend
+```
 
 ---
 
@@ -117,8 +158,8 @@ Benefits:
 
 - React
 - Vite
-- ReadableStream
 - Fetch API
+- ReadableStream
 
 ### External Services
 
@@ -127,29 +168,65 @@ Benefits:
 
 ---
 
-## Architecture
-
-See:
+## Project Structure
 
 ```text
-docs/ARCHITECTURE.md
+recbot/
+│
+├── backend/
+│   ├── agents/
+│   │   ├── query_classifier.py
+│   │   ├── intent_classifier.py
+│   │   ├── recommendation_writer.py
+│   │   └── followup_agent.py
+│   │
+│   ├── services/
+│   │   ├── amazon_search.py
+│   │   └── web_reviews.py
+│   │
+│   ├── prompts/
+│   ├── models/
+│   ├── utils/
+│   ├── main.py
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.js
+│
+├── docs/
+│   └── ARCHITECTURE.md
+│
+└── README.md
 ```
 
 ---
 
-## Installation
+## Local Installation
 
-### 1. Clone Repository
+### Prerequisites
+
+Install:
+
+- Python 3.11+
+- Node.js 20+
+- Git
+- Ollama
+
+---
+
+### Clone Repository
 
 ```bash
-git clone https://github.com/your-org/recbot.git
+git clone https://github.com/<username>/recbot.git
 
 cd recbot
 ```
 
 ---
 
-### 2. Install Ollama
+### Install Ollama
 
 Download:
 
@@ -169,7 +246,7 @@ ollama run mistral
 
 ---
 
-### 3. Backend Setup
+### Backend Setup
 
 ```bash
 cd backend
@@ -183,7 +260,7 @@ Windows:
 venv\Scripts\activate
 ```
 
-Mac/Linux:
+Linux/Mac:
 
 ```bash
 source venv/bin/activate
@@ -199,11 +276,13 @@ Create:
 
 ```env
 RAPIDAPI_KEY=<YOUR_KEY>
+
 SERPAPI_KEY=<YOUR_KEY>
+
 OLLAMA_MODEL=mistral
 ```
 
-Run:
+Run backend:
 
 ```bash
 uvicorn main:app --reload
@@ -217,7 +296,7 @@ http://localhost:8000
 
 ---
 
-### 4. Frontend Setup
+### Frontend Setup
 
 ```bash
 cd frontend
@@ -253,13 +332,7 @@ Open:
 http://localhost:5173
 ```
 
-Try:
-
-```text
-Best gaming laptop under ₹80,000
-```
-
-or
+Example Query:
 
 ```text
 Best Marshall amplifier under ₹15,000
@@ -269,58 +342,54 @@ Best Marshall amplifier under ₹15,000
 
 ## Hallucination Prevention
 
-RecBot implements multiple safeguards:
+RecBot minimizes hallucinations through:
 
-- Follow-up grounding
+- Query Type routing
 - Product grounding
+- Followup restrictions
 - Rating filters
 - Review-count filters
-- Explicit context restrictions
+- Context preservation
 
-The Follow-up Agent is only allowed to reason over previously shown products.
+The Followup Agent only receives previously retrieved products and conversation context.
 
 ---
 
 ## Performance
 
-| Metric | Value |
-|----------|---------|
-| Initial Search | 30–60 sec |
-| Follow-up Query | 20–40 sec |
+| Metric | Observed |
+|----------|----------|
+| New Search | 30–60 sec |
+| Follow-up | 20–40 sec |
 | First Token Latency | 15–20 sec |
 | Products Returned | Up to 5 |
 
 ---
 
-## Future Roadmap
+## Future Enhancements
 
-### Phase 2
+### Near-Term
 
-- ChromaDB Integration
-- Semantic Product Search
-- Persistent Conversations
+- Category keyword filtering
+- GPU acceleration
+- Persistent sessions
 
-### Phase 3
+### Long-Term
 
-- Sentiment Analysis Pipeline
-- Price Tracking
-- Deal Alerts
-
-### Phase 4
-
-- Voice Assistant
-- Mobile Application
-- Personalized User Profiles
+- ChromaDB / FAISS
+- Semantic product search
+- Sentiment analysis pipeline
+- Price history tracking
+- Voice input
+- Mobile application
 
 ---
 
 ## Contributors
 
+- Ron Gangopadhyay
 - Anshuman Anand Nayak
 - Piyush Pravakar Nayak
 - Rhitav Gangopadhyay
 
 ---
-
-
-
