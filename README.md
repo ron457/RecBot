@@ -322,6 +322,5 @@ The Follow-up Agent is only allowed to reason over previously shown products.
 
 ---
 
-## License
 
 MIT License
