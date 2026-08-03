@@ -387,9 +387,6 @@ The Followup Agent only receives previously retrieved products and conversation 
 
 ## Contributors
 
-- Ron Gangopadhyay
-- Anshuman Anand Nayak
-- Piyush Pravakar Nayak
 - Rhitav Gangopadhyay
 
 ---
